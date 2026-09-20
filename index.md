@@ -1,123 +1,109 @@
 ---
 layout: default
+lang: zh-CN
+lang_label: CN
+lang_alt: /en/
+lang_alt_label: EN
+lang_alt_code: en
 ---
 
-Text can be **bold**, _italic_, or ~~strikethrough~~.
+# Jadeite 主题
 
-[Link to another page](./another-page.html).
+Jadeite 是在 Cayman 的基础上改造的 Jekyll 主题：顶部固定一条窄 Header，下面左边是跟随滚动的目录、右边是正文，最底部是页脚。
 
-There should be whitespace between paragraphs.
+## 桌面端布局
 
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
+窗口宽度大于 768px 时，页面是两栏。Header 吸附在顶部，目录栏用 `position: sticky` 跟随滚动。
 
-# Header 1
+### 固定 Header
 
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
+Header 高度 64px，分三区：左边语言切换、中间站点标题（水平居中）、右边 GitHub 按钮。手机端右边再多一个 ☰。站点描述跟在标题下方，窄屏隐藏。它不会随页面滚走，所以从任何位置点目录跳转，标题都不会被顶栏挡住。
 
-## Header 2
+### 语言切换
 
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
+左边那颗 CN 是一颗下拉按钮，点开看看：CN 打着勾、点了没反应，EN 会跳到本页的英文版（Cayman 的原始示例正文）。切换地址来自 `_config.yml` 的 `lang_alt`，某一页想单独指向别处，就在那一页的 front matter 里写同名键覆盖。
 
-### Header 3
+如果哪天删掉英文页，把 `lang_alt` 注释掉即可 —— EN 会灰掉变成不可点，而不是留一条死链。点菜单外面或者按 Esc 都会收起来。
 
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require('./lang/' + l)
-  return true;
-}
+### 两栏与滚动目录
+
+左边一栏宽 220px，吸附位置距离视口顶部 80px —— 也就是 64px 的顶栏再加一点呼吸空间。右边正文自适应剩余宽度。
+
+> 目录里当前所在的章节会高亮，靠 `toc.js` 在滚动时对比每个标题的位置算出来，不是靠 IntersectionObserver 猜的。
+
+## 正文排版
+
+下面这些元素都沿用 Cayman 的排版：段落、引用、列表、表格、代码块。想换配色或字体，改 `_sass/variables.scss` 就行。
+
+### 代码块
+
+```yaml
+# _config.yml 里不要出现 theme: 或 remote_theme:
+title: Jadeite 主题
+toc_title: 目录
+baseurl: /jekyll-theme-jadeite   # 项目主页必需，否则静态资源 404
+plugins:
+  - jekyll-seo-tag
 ```
 
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
-```
+### 表格
 
-#### Header 4
+| 宽度 | 布局 | 目录栏 |
+|:-----|:-----|:-------|
+| > 768px | 左右两栏 | 左侧固定，跟随滚动 |
+| ≤ 768px | 单栏 | 缩进右侧，点 ☰ 滑出 |
+| 打印 | 单栏 | 隐藏 |
 
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
+### 列表
 
-##### Header 5
+- 无序列表项
+- 无序列表项
+  - 嵌套一层
+  - 再嵌套一层
 
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
+1. 有序列表项
+2. 有序列表项
 
-###### Header 6
+## 手机端行为
 
-| head1        | head two          | three |
-|:-------------|:------------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
+把浏览器窗口拖到 768px 以下，或者按 F12 打开设备模拟。此时：正文变成全宽，目录栏从文档流里抽出来，停靠在屏幕右侧之外。
 
-### There's a horizontal rule below this.
+### 汉堡按钮
 
-* * *
+顶栏右上角出现 ☰。点一下会给 `body` 加上 `menu-open`，三根横线折成一个叉。
 
-### Here is an unordered list:
+### 滑出面板
 
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
+目录面板从右侧滑入，宽度是视口宽度的 78%（最多 300px），后面压一层半透明遮罩。关闭方式有四种：再点一次 ☰、点遮罩、按 Esc、点目录里的任意一条。
 
-### And an ordered list:
+面板收起时整块是隐藏状态，连阴影也不画 —— 否则那圈 20px 的模糊阴影会从屏幕右边缘漏一条进来。
 
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
+## 页脚
 
-### And a nested list:
+页脚放一键下载：`下载 ZIP 压缩包` / `下载 TAR 包` / `在 GitHub 查看`。只有 `_config.yml` 里 `show_downloads: true` 且拿得到仓库地址时才渲染，否则整块不出现，不会留空按钮或死链。
 
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
+手机端顶栏把 GitHub 按钮藏了起来（右侧位置留给 ☰），所以页脚这一排就是手机上唯一的仓库入口。
 
-### Small image
+## 目录只收 h1 到 h3
 
-![Octocat](https://github.githubassets.com/images/icons/emoji/octocat.png)
+#### 这一节是 h4，不应该出现在目录里
 
-### Large image
+目录只收 h1/h2/h3，更深的层级照旧显示在正文里但不进目录。
 
-![Branching](https://guides.github.com/activities/hello-world/branching.png)
+##### h5 同理
 
+如果以后想收更深的层级，改 `assets/js/toc.js` 里的 `HEADING_SELECTOR` 就行。
 
-### Definition lists can be used with HTML syntax.
+如果某一页正文里一个 h1/h2/h3 都没有，`toc.js` 会给 `body` 加上 `no-toc`，目录栏和汉堡按钮都会自动隐藏 —— 免得点开一个空面板。
 
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
+## 锚点去重
 
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
-```
+同一个页面里出现同名标题时，自动生成的 id 会加数字后缀，不会互相抢锚点。下面两节同名，检查左侧目录里的 href 即可。
 
-```
-The final element.
-```
+### 示例
+
+第一节。
+
+### 示例
+
+第二节，它的 id 应该是 `示例-2`。

@@ -31,9 +31,11 @@ baseurl: /jekyll-theme-jadeite
 # 想让某一页单独指向别的地址，就在那一页的 front matter 里写同样的键覆盖它。
 lang_switch: true
 lang_label: CN
-# lang_alt: /en/
-# lang_alt_label: EN
-# lang_alt_code: en
+# 英文版在 en/index.md（Cayman 的原始示例正文）。删掉那一页时就把这三行注释掉，
+# 菜单里的 EN 会自动变成灰色不可点，不会留下死链。
+lang_alt: /en/
+lang_alt_label: EN
+lang_alt_code: en
 
 # ------------------------------------------------------------------ 仓库链接
 # 顶栏右侧的 GitHub 按钮 + 页脚的一键下载都用这两个值。

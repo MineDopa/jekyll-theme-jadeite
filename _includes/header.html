@@ -30,7 +30,7 @@
     <div class="header-lang">
       {% if site.lang_switch != false %}
       <details class="lang-switch" id="lang-switch">
-        <summary class="lang-toggle" aria-label="切换语言">
+        <summary class="lang-toggle" aria-label="{{ t_lang_aria }}">
           <span>{{ lang_label }}</span>
           <span class="lang-caret" aria-hidden="true"></span>
         </summary>
@@ -42,7 +42,7 @@
             {% if lang_alt_url %}
             <a class="lang-item" href="{{ lang_alt_url | relative_url }}"{% if lang_alt_code %} hreflang="{{ lang_alt_code }}"{% endif %}><span class="lang-check" aria-hidden="true"></span>{{ lang_alt_label }}</a>
             {% else %}
-            <span class="lang-item is-disabled" aria-disabled="true" title="暂未提供"><span class="lang-check" aria-hidden="true"></span>{{ lang_alt_label }}</span>
+            <span class="lang-item is-disabled" aria-disabled="true" title="{{ t_lang_na }}"><span class="lang-check" aria-hidden="true"></span>{{ lang_alt_label }}</span>
             {% endif %}
           </li>
         </ul>
@@ -52,12 +52,13 @@
 
     <div class="header-brand">
       <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title | default: site.github.repository_name }}</a>
-      {% if site.description %}<p class="site-tagline">{{ site.description }}</p>{% endif %}
+      {% assign tagline = page.description | default: site.description %}
+      {% if tagline %}<p class="site-tagline">{{ tagline }}</p>{% endif %}
     </div>
 
     <div class="header-actions">
       {% if repo_url %}<a class="repo-link" href="{{ repo_url }}" rel="noopener">GitHub</a>{% endif %}
-      <button id="menu-toggle" class="menu-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="目录">
+      <button id="menu-toggle" class="menu-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="{{ t_menu_aria }}" data-label="{{ t_menu_aria }}" data-label-open="{{ t_menu_aria_open }}">
         <span class="menu-toggle-box" aria-hidden="true">
           <span></span>
           <span></span>

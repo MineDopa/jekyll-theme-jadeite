@@ -89,10 +89,16 @@
       return body.classList.contains(OPEN_CLASS);
     }
 
+    // The button carries its own labels so the language switch stays honest:
+    //   data-label       closed state   (zh: 目录 / en: Table of contents)
+    //   data-label-open  open state     (zh: 关闭目录 / en: Close table of contents)
+    var closedLabel = toggle.getAttribute('data-label') || 'Table of contents';
+    var openLabel = toggle.getAttribute('data-label-open') || 'Close table of contents';
+
     function setOpen(open) {
       body.classList.toggle(OPEN_CLASS, open);
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggle.setAttribute('aria-label', open ? 'Close table of contents' : 'Table of contents');
+      toggle.setAttribute('aria-label', open ? openLabel : closedLabel);
     }
 
     toggle.addEventListener('click', function (event) {

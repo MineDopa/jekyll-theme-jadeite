@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ page.lang | default: site.lang | default: "zh-CN" }}">
+  {% include i18n.html %}
   <head>
     <meta charset="UTF-8">
 
@@ -13,7 +14,7 @@
     {% include head-custom.html %}
   </head>
   <body>
-    <a id="skip-to-content" href="#content">跳到正文</a>
+    <a id="skip-to-content" href="#content">{{ t_skip }}</a>
 
     {% include header.html %}
 
@@ -21,7 +22,7 @@
 
     <div class="page-wrapper">
       <aside id="sidebar" class="sidebar">
-        <p class="toc-title">{{ site.toc_title | default: '目录' }}</p>
+        <p class="toc-title">{{ t_toc_title }}</p>
         {% include toc.html %}
       </aside>
 
@@ -38,21 +39,22 @@
             repository_url: ...    或 GitHub Pages 自动注入的 site.github.repository_url
           分支名默认 master，仓库用 main 的话在 _config.yml 写 repository_branch: main
 
-          文案全在这里，要改英文版直接改下面这几行（<strong> 里是加粗的部分）。
+          文案不再写死在这里：{{ t_dl_zip }} 等变量来自 _includes/i18n.html，
+          按 page.lang / site.lang 自动出中文或英文，改文案去那边改。
         {% endcomment %}
         {% assign repo_url = site.repository_url | default: site.github.repository_url %}
         {% if site.show_downloads and repo_url %}
           {% assign repo_branch = site.repository_branch | default: 'master' %}
           <ul class="downloads">
-            <li><a href="{{ repo_url }}/zipball/{{ repo_branch }}">下载 <strong>ZIP 压缩包</strong></a></li>
-            <li><a href="{{ repo_url }}/tarball/{{ repo_branch }}">下载 <strong>TAR 包</strong></a></li>
-            <li><a href="{{ repo_url }}">在 <strong>GitHub</strong> 查看</a></li>
+            <li><a href="{{ repo_url }}/zipball/{{ repo_branch }}">{{ t_dl_zip }}</a></li>
+            <li><a href="{{ repo_url }}/tarball/{{ repo_branch }}">{{ t_dl_tar }}</a></li>
+            <li><a href="{{ repo_url }}">{{ t_dl_repo }}</a></li>
           </ul>
         {% endif %}
         {% if site.github.is_project_page %}
-          <span class="site-footer-owner"><a href="{{ site.github.repository_url }}">{{ site.github.repository_name }}</a> 由 <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a> 维护。</span>
+          <span class="site-footer-owner">{{ t_owner }}</span>
         {% endif %}
-        <span class="site-footer-credits">本页面由 <a href="https://pages.github.com">GitHub Pages</a> 生成。</span>
+        <span class="site-footer-credits">{{ t_credits }}</span>
       </div>
     </footer>
 
