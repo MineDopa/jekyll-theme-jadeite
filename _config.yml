@@ -1,5 +1,65 @@
-title: Cayman theme
-description: Cayman is a clean, responsive theme for GitHub Pages.
+title: Jadeite 主题
+description: Jadeite 是一个简洁、响应式的 Jekyll 主题，带固定顶栏与跟随滚动的目录。
+lang: zh-CN
+toc_title: 目录
+
+# ----------------------------------------------------------------- 站点地址
+# ⚠️ 这两行是「项目主页」能不能正常显示的关键，不能删。
+# 仓库名为 jekyll-theme-jadeite 时，站点地址是
+#   https://minedopa.github.io/jekyll-theme-jadeite/
+# 而不是根域，所以 baseurl 必须填 /仓库名，否则样式表和脚本会去
+#   https://minedopa.github.io/assets/...
+# 找文件 —— 全部 404，页面变成无样式的纯文本。
+#
+# 什么时候要改：
+#   · 仓库改名            → baseurl 跟着改成 /新仓库名
+#   · 仓库改叫 <用户名>.github.io → baseurl 留空（站点在根域）
+#   · 绑了自定义域名      → baseurl 留空，url 换成域名
+url: https://minedopa.github.io
+baseurl: /jekyll-theme-jadeite
+
+# ---------------------------------------------------------------------- 语言
+# 站点默认语言，写进 <html lang>。页面级可以用 front matter 的 lang: 覆盖。
+
+# 顶栏左侧的语言切换下拉。
+#   lang_switch     设 false 就整块不渲染
+#   lang_label      当前语言显示名（按钮上 + 菜单里打勾那项）
+#   lang_alt        另一种语言的「站内路径」；不填 → 菜单里那一项灰掉不可点，
+#                   所以只有中文版时不会出现死链。值必须以 / 开头。
+#   lang_alt_label  另一种语言显示名
+#   lang_alt_code   hreflang 值
+# 想让某一页单独指向别的地址，就在那一页的 front matter 里写同样的键覆盖它。
+lang_switch: true
+lang_label: CN
+# lang_alt: /en/
+# lang_alt_label: EN
+# lang_alt_code: en
+
+# ------------------------------------------------------------------ 仓库链接
+# 顶栏右侧的 GitHub 按钮 + 页脚的一键下载都用这两个值。
+# repository_url 留空时，会自动使用 GitHub Pages 注入的 site.github.repository_url。
+repository_url: https://github.com/MineDopa/jekyll-theme-jadeite
+repository_branch: master
 show_downloads: true
+
 google_analytics:
-theme: jekyll-theme-cayman
+
+# ------------------------------------------------------------------- 构建
+# 站点现在是「自带主题文件」的站点：_layouts / _includes / _sass / assets 都在本仓库里，
+# 因此 _config.yml 中不能出现 theme: 或 remote_theme:，否则 Jekyll 会去加载远程主题。
+# 例外：{% seo %} 标签来自 jekyll-seo-tag，去掉了 theme: 之后必须显式声明插件。
+plugins:
+  - jekyll-seo-tag
+
+# Jekyll 的 exclude 会整份替换默认值，所以默认那几个也要照抄一份。
+# 下面都是「开发用、不该出现在网站里」的文件：脚本、协作说明、gem 描述文件。
+# 注意：以 . 或 _ 开头的文件（.workbuddy / .github / _sass …）Jekyll 本来就会忽略，
+#      这里列的是不带点的那些。
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - script
+  - docs
+  - jekyll-theme-cayman.gemspec

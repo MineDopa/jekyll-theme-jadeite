@@ -1,0 +1,70 @@
+{% comment %}
+  顶栏。三区结构，桌面端与手机端一致，靠 CSS Grid 的 1fr auto 1fr 保证标题
+  永远水平居中（左右两列等分剩余空间）：
+
+    .header-lang     左 —— 语言切换（原生 <details> 下拉）
+    .header-brand    中 —— 站点标题（描述见下，手机端隐藏）
+    .header-actions  右 —— GitHub 按钮（手机端隐藏）+ 汉堡 ☰（仅手机端出现）
+
+  ⚠️ 三个 div 必须始终存在，哪怕里面是空的：Grid 是按子元素顺序装列的，
+  少一个就会整体错位。所以 lang_switch 的开关写在 div 内部。
+
+  语言切换的配置（_config.yml 站点级；页面 front matter 写同名键可单页覆盖）：
+    lang_switch     设 false 则整块不渲染
+    lang_label      当前语言显示名，默认 CN
+    lang_alt        另一种语言的「站内路径」；不填 → 那一项灰掉不可点，不会死链
+    lang_alt_label  另一种语言显示名，默认 EN
+    lang_alt_code   hreflang 值，可选
+    repository_url  右侧 GitHub 按钮的地址；不填则按钮不渲染
+{% endcomment %}
+
+{% assign lang_label = page.lang_label | default: site.lang_label | default: 'CN' %}
+{% assign lang_alt_url = page.lang_alt | default: site.lang_alt %}
+{% assign lang_alt_label = page.lang_alt_label | default: site.lang_alt_label | default: 'EN' %}
+{% assign lang_alt_code = page.lang_alt_code | default: site.lang_alt_code %}
+{% assign repo_url = site.repository_url | default: site.github.repository_url %}
+
+<header class="site-header" role="banner">
+  <div class="site-header-inner">
+
+    <div class="header-lang">
+      {% if site.lang_switch != false %}
+      <details class="lang-switch" id="lang-switch">
+        <summary class="lang-toggle" aria-label="切换语言">
+          <span>{{ lang_label }}</span>
+          <span class="lang-caret" aria-hidden="true"></span>
+        </summary>
+        <ul class="lang-menu">
+          <li>
+            <span class="lang-item is-current" aria-current="true"><span class="lang-check" aria-hidden="true">&#10003;</span>{{ lang_label }}</span>
+          </li>
+          <li>
+            {% if lang_alt_url %}
+            <a class="lang-item" href="{{ lang_alt_url | relative_url }}"{% if lang_alt_code %} hreflang="{{ lang_alt_code }}"{% endif %}><span class="lang-check" aria-hidden="true"></span>{{ lang_alt_label }}</a>
+            {% else %}
+            <span class="lang-item is-disabled" aria-disabled="true" title="暂未提供"><span class="lang-check" aria-hidden="true"></span>{{ lang_alt_label }}</span>
+            {% endif %}
+          </li>
+        </ul>
+      </details>
+      {% endif %}
+    </div>
+
+    <div class="header-brand">
+      <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title | default: site.github.repository_name }}</a>
+      {% if site.description %}<p class="site-tagline">{{ site.description }}</p>{% endif %}
+    </div>
+
+    <div class="header-actions">
+      {% if repo_url %}<a class="repo-link" href="{{ repo_url }}" rel="noopener">GitHub</a>{% endif %}
+      <button id="menu-toggle" class="menu-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="目录">
+        <span class="menu-toggle-box" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+    </div>
+
+  </div>
+</header>

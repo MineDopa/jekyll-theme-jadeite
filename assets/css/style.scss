@@ -1,4 +1,9 @@
 ---
 ---
 
+// Base layer (typography, code, tables, footer bar) kept from Cayman.
 @import 'jekyll-theme-cayman';
+
+// Jadeite layout layer (sticky header, two columns, off-canvas TOC).
+// Must come last so it can override the base layer.
+@import 'layout';

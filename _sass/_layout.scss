@@ -1,0 +1,673 @@
+// ---------------------------------------------------------------------------
+// Jadeite layout
+//
+//   .site-header   sticky top bar (title + hamburger)
+//   .page-wrapper  flex row: [ .sidebar (sticky TOC) | .content ]
+//   .site-footer   full-width bar below both columns
+//
+// Below $mobile-breakpoint the sidebar becomes an off-canvas panel driven by
+// `body.menu-open`.
+//
+// This file is imported AFTER jekyll-theme-cayman, so it may override the base
+// styles where the two disagree.
+// ---------------------------------------------------------------------------
+
+$mobile-breakpoint: 768px !default;
+$header-height: 64px !default;
+$anchor-offset: 80px !default;    // sticky header height + breathing room
+$sidebar-width: 220px !default;
+$layout-max-width: 68rem !default;
+
+@mixin j-mobile {
+  @media screen and (max-width: #{$mobile-breakpoint}) {
+    @content;
+  }
+}
+
+// CSS custom properties are the single source of truth for values that
+// assets/js/toc.js also needs (it reads --anchor-offset).
+:root {
+  --header-height: #{$header-height};
+  --anchor-offset: #{$anchor-offset};
+  --sidebar-width: #{$sidebar-width};
+}
+
+html {
+  // Anchor jumps must not hide the heading behind the sticky header.
+  scroll-padding-top: $anchor-offset;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+// Headings that toc.js links to also clear the sticky header in browsers that
+// ignore scroll-padding-top.
+.content {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    scroll-margin-top: $anchor-offset;
+  }
+}
+
+/* ------------------------------------------------------------------ header */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  color: $header-heading-color;
+  background-color: $header-bg-color;
+  background-image: linear-gradient(120deg, $header-bg-color-secondary, $header-bg-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
+
+  a {
+    color: inherit;
+  }
+}
+
+// Three equal-ish columns: the outer two are 1fr, so the middle column is
+// always centred no matter how wide the language button or the actions are.
+// `min-width: 0` on the columns is what lets a long site title ellipsis
+// instead of pushing the outer columns off screen.
+.site-header-inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: $layout-max-width;
+  min-height: $header-height;
+  padding: 0.5rem 1.5rem;
+  margin: 0 auto;
+}
+
+.header-lang {
+  display: flex;
+  justify-self: start;
+  min-width: 0;
+}
+
+.header-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  min-width: 0;
+  // Keeps a long title + tagline from eating the two side columns.
+  // 50vw on small screens, 34rem on large ones.
+  max-width: min(34rem, 50vw);
+  text-align: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.site-title {
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: $header-heading-color;
+  text-decoration: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &:hover,
+  &:focus {
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.85;
+  }
+}
+
+.site-tagline {
+  max-width: 100%;
+  margin: 0.1rem 0 0;
+  overflow: hidden;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  opacity: 0.72;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------- header chip buttons */
+
+// Shared look for the little translucent buttons sitting on the coloured bar:
+// the language switcher and the GitHub link.
+@mixin header-chip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  height: 32px;
+  padding: 0 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: $header-heading-color;
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+@mixin header-chip-hover {
+  color: #fff;
+  text-decoration: none;
+  background-color: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+@mixin header-chip-focus {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
+}
+
+.repo-link {
+  @include header-chip;
+
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    @include header-chip-hover;
+  }
+
+  &:focus-visible {
+    @include header-chip-focus;
+  }
+}
+
+/* --------------------------------------------------------- language switch */
+
+.lang-switch {
+  position: relative;
+}
+
+.lang-toggle {
+  @include header-chip;
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  list-style: none; // Firefox
+
+  &::-webkit-details-marker {
+    display: none; // Safari / Chrome
+  }
+
+  &:hover,
+  &:focus {
+    @include header-chip-hover;
+  }
+
+  &:focus-visible {
+    @include header-chip-focus;
+  }
+}
+
+.lang-caret {
+  width: 0;
+  height: 0;
+  border-top: 5px solid currentColor;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  transition: transform 0.15s ease;
+}
+
+.lang-switch[open] {
+  .lang-caret {
+    transform: rotate(180deg);
+  }
+
+  > .lang-toggle {
+    @include header-chip-hover;
+  }
+}
+
+.lang-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 60;
+  min-width: 7.5rem;
+  padding: 0.25rem;
+  margin: 0;
+  list-style: none;
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+
+  li {
+    margin: 0;
+  }
+}
+
+.lang-item {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  color: $body-text-color;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: 4px;
+
+  &.is-current {
+    font-weight: 600;
+    color: $section-headings-color;
+  }
+
+  &.is-disabled {
+    color: #9aa5a0;
+    cursor: not-allowed;
+  }
+}
+
+// Only the real links get a hover highlight — the greyed-out entry is inert.
+a.lang-item {
+  &:hover,
+  &:focus {
+    color: $body-link-color;
+    text-decoration: none;
+    background-color: $code-bg-color;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $body-link-color;
+    outline-offset: -2px;
+  }
+}
+
+.lang-check {
+  display: inline-block;
+  width: 1em;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------ hamburger */
+
+.menu-toggle {
+  display: none; // desktop: the sidebar is always visible
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: $header-heading-color;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.85);
+    outline-offset: 2px;
+  }
+}
+
+.menu-toggle-box {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 14px;
+
+  span {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: currentColor;
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+
+    &:nth-child(1) {
+      top: 0;
+    }
+
+    &:nth-child(2) {
+      top: 6px;
+    }
+
+    &:nth-child(3) {
+      top: 12px;
+    }
+  }
+}
+
+// Bars fold into a cross while the panel is open.
+body.menu-open .menu-toggle-box span {
+  &:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  &:nth-child(2) {
+    opacity: 0;
+  }
+
+  &:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+}
+
+/* ----------------------------------------------------- two column wrapper */
+
+.page-wrapper {
+  display: flex;
+  align-items: flex-start; // required: stretch would kill position: sticky
+  gap: 2.5rem;
+  max-width: $layout-max-width;
+  padding: 0 1.5rem;
+  margin: 0 auto;
+}
+
+.sidebar {
+  position: sticky;
+  top: $anchor-offset;
+  z-index: 1;
+  align-self: flex-start;
+  flex: 0 0 $sidebar-width;
+  width: $sidebar-width;
+  max-height: calc(100vh - #{$anchor-offset} - 1.5rem);
+  padding: 2.5rem 0 2rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.content {
+  flex: 1 1 auto;
+  min-width: 0; // lets tables / <pre> scroll instead of blowing up the flex row
+  max-width: none;
+  padding: 2.5rem 0 3.5rem;
+  margin: 0;
+}
+
+// 769px–1024px: the sidebar eats a lot of a narrow viewport, tighten the gap.
+@media screen and (min-width: #{$mobile-breakpoint + 1px}) and (max-width: 64em) {
+  .page-wrapper {
+    gap: 1.5rem;
+  }
+}
+
+/* ------------------------------------------------------------------- toc */
+
+.toc-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $blockquote-text-color;
+}
+
+#toc {
+  font-size: 0.9rem;
+  line-height: 1.45;
+
+  &:empty {
+    display: none;
+  }
+
+  ul.toc-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+      margin: 0;
+    }
+
+    a {
+      display: block;
+      padding: 0.2rem 0.5rem 0.2rem 0.7rem;
+      color: $body-text-color;
+      text-decoration: none;
+      border-left: 2px solid $border-color;
+      border-radius: 0 3px 3px 0;
+      transition: color 0.15s, background-color 0.15s, border-color 0.15s;
+
+      &:hover,
+      &:focus {
+        color: $body-link-color;
+        text-decoration: none;
+        background-color: $code-bg-color;
+      }
+    }
+
+    li.tag-h1 > a {
+      font-weight: 700;
+    }
+
+    li.tag-h2 > a {
+      padding-left: 1.35rem;
+    }
+
+    li.tag-h3 > a {
+      padding-left: 2rem;
+      font-size: 0.84rem;
+    }
+
+    li.active > a {
+      font-weight: 600;
+      color: $section-headings-color;
+      background-color: $code-bg-color;
+      border-left-color: $section-headings-color;
+    }
+  }
+}
+
+/* --------------------------------------------------------------- overlay */
+
+// Desktop never shows an overlay. The mobile block below flips this to `block`
+// — without that, `opacity`/`visibility` have nothing to act on and the
+// backdrop would stay invisible (and untappable) on phones too.
+.menu-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  background-color: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.site-footer-inner {
+  max-width: $layout-max-width;
+  padding: 0 1.5rem;
+  margin: 0 auto;
+}
+
+// The "Download ZIP / TAR / View on GitHub" strip, borrowed from Minimal but
+// re-coloured for jadeite. Only rendered when show_downloads is true and a
+// repository_url is known.
+.downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0 0 1rem;
+  list-style: none;
+
+  li {
+    margin: 0;
+  }
+
+  a {
+    display: inline-block;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
+    line-height: 1.25;
+    color: $header-heading-color;
+    text-decoration: none;
+    background-color: $header-bg-color;
+    border-radius: 4px;
+    transition: background-color 0.15s;
+
+    strong {
+      font-weight: 700;
+    }
+
+    &:hover,
+    &:focus {
+      color: $header-heading-color;
+      text-decoration: none;
+      background-color: $header-bg-color-secondary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $header-bg-color-secondary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+/* --------------------------------------------------------------- mobile */
+
+@include j-mobile {
+  body.menu-open {
+    overflow: hidden;
+  }
+
+  .page-wrapper {
+    display: block;
+    padding: 0 1.25rem;
+  }
+
+  .content {
+    max-width: none;
+    padding: 1.75rem 0 2.5rem;
+  }
+
+  .menu-backdrop {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    z-index: 40; // below the header, so the ☰ stays tappable
+    width: 78vw;
+    max-width: 300px;
+    max-height: none;
+    padding: calc(#{$header-height} + 1.25rem) 1.25rem 2rem;
+    overflow-y: auto;
+    background-color: #fff;
+    // The panel parks 100% to the right of the viewport, but a blurred
+    // box-shadow still bleeds back in — that was the sliver of shadow in the
+    // top-right corner. So: no shadow and no paint while it is closed.
+    // `visibility` is delayed by the transition duration, which keeps the
+    // slide-out animation visible and kills the shadow the moment it ends.
+    box-shadow: none;
+    visibility: hidden;
+    transform: translateX(100%);
+    transition: transform 0.28s ease, box-shadow 0.28s ease, visibility 0s linear 0.28s;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.menu-open .sidebar {
+    visibility: visible;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.18);
+    transform: translateX(0);
+    transition: transform 0.28s ease, box-shadow 0.28s ease, visibility 0s;
+  }
+
+  body.menu-open .menu-backdrop {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  .site-tagline {
+    display: none;
+  }
+
+  // Two chips + a title + a hamburger is one thing too many on a phone. The
+  // GitHub link still reaches the visitor through the footer downloads.
+  .repo-link {
+    display: none;
+  }
+
+  // Kept on mobile: switching language is the one header action a visitor may
+  // need before scrolling. Squeezed slightly so a long title still fits.
+  .lang-toggle {
+    height: 30px;
+    padding: 0 0.5rem;
+  }
+
+  .site-header-inner {
+    padding: 0.5rem 1.25rem;
+  }
+}
+
+/* Pages without headings get neither a TOC nor a hamburger. */
+body.no-toc {
+  .sidebar,
+  .menu-toggle {
+    display: none;
+  }
+}
+
+/* ----------------------------------------------------------------- print */
+
+@media print {
+  .site-header {
+    position: static;
+    box-shadow: none;
+  }
+
+  .sidebar,
+  .menu-backdrop,
+  .menu-toggle {
+    display: none;
+  }
+
+  .page-wrapper {
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+
+  .content {
+    padding: 0;
+  }
+}
