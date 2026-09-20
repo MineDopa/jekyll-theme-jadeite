@@ -51,7 +51,7 @@
     </div>
 
     <div class="header-brand">
-      <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title | default: site.github.repository_name }}</a>
+      <a class="site-title" href="{{ '/' | relative_url }}">{{ t_site_title | default: site.github.repository_name }}</a>
       {% assign tagline = page.description | default: site.description %}
       {% if tagline %}<p class="site-tagline">{{ tagline }}</p>{% endif %}
     </div>

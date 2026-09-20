@@ -260,14 +260,20 @@ html {
   }
 }
 
-.lang-item {
+// ⚠️ 必须挂在 .lang-menu 下面：只写 .lang-item（1 个类）压不过
+// .site-header a（1 个类 + 1 个元素），文字会被 `color: inherit` 拉成白色，
+// 在白色面板上等于隐形，只有悬停时才会因 a.lang-item:hover 变回蓝色。
+//
+// 默认色用近黑（比正文的 $body-text-color 更深），白底小菜单里更清楚；
+// 想跟正文统一就换成 $body-text-color。
+.lang-menu .lang-item {
   display: flex;
   align-items: center;
   gap: 0.15rem;
   padding: 0.4rem 0.6rem;
   font-size: 0.85rem;
   line-height: 1.2;
-  color: $body-text-color;
+  color: #24292e;
   text-decoration: none;
   white-space: nowrap;
   border-radius: 4px;

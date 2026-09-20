@@ -1,5 +1,8 @@
 title: Jadeite 主题
 description: Jadeite 是一个简洁、响应式的 Jekyll 主题，带固定顶栏与跟随滚动的目录。
+# 顶栏中间那行站点标题在英文页（front matter 写 lang: en）会用 title_en；
+# 不填就退回 title，也就是英文页顶栏继续显示中文站名。
+title_en: Jadeite theme
 lang: zh-CN
 toc_title: 目录
 
